@@ -1,0 +1,32 @@
+version: 0.2
+
+phases:
+ install:
+   runtime-versions:
+     php: 7.4-fpm
+ pre_build: # commands to be run before build
+   commands:
+   - echo Logging in to Amazon ECR....
+   - aws --version
+   # login to Elastic container registry
+   - eval $(aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/z0i8z3s8)
+   - REPOSITORY_URI= public.ecr.aws/z0i8z3s8/sharebook:sharebook_php-fpm
+   - IMAGE_TAG= sharebook_php-fpm
+ build:
+   commands:
+   - echo Build started on `date`
+   - echo installing composer..
+   - composer install
+   - echo creating .env file..
+   - cp .env.example .env
+   - echo generating app key
+   - php artisan key:generate
+   - echo Building the Docker image...
+   - docker build -t sharebook_php-fpm:latest .
+   -  docker tag sharebook_php-fpm public.ecr.aws/z0i8z3s8/sharebook:sharebook_php-fpm
+ post_build:
+   commands:
+     - echo Build completed on `date`
+     - echo Pushing the Docker image...
+     - docker image ls -a
+     - docker push public.ecr.aws/z0i8z3s8/sharebook:sharebook_php-fpm
