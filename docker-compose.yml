@@ -1,0 +1,73 @@
+version : "3"
+services:
+  web:
+    image: nginx
+    container_name: nginx_sharebook
+    ports:
+      - 80:80
+    volumes:
+      - ./web/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./web/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./sharebook:/var/www/sharebook
+    depends_on:
+      - php-fpm
+
+  php-fpm:
+    build: ./web
+    container_name: sharebook
+    volumes:
+      - ./sharebook:/var/www/sharebook
+    depends_on:
+      - db
+    # command: >
+    #   bash -c '
+    #     composer create-project --prefer-dist laravel/laravel . &&
+    #     chmod -R 777 ./storage/logs &&
+    #     chmod -R 777 ./storage/framework
+    #   '
+
+  db:
+    image: mysql:5.7
+    container_name: mysql_sharebook
+    restart: always
+    ports:
+      - 3307:3306
+    volumes:
+      - ./web/mysql/data:/var/lib/mysql
+      # - ./mysql/initdb:/docker-entrypoint-initdb.d
+      # - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=sharebook
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=admin
+
+
+### docker-compose.yml を格納してる場所で以下コマンドを実行
+# docker-compose up -d
+#
+### php-fpm コンテナの中に入る
+# docker-compose exec php-fpm bash
+#
+### Laravel インストール
+# composer create-project --prefer-dist laravel/laravel .
+# chmod -R 777 /var/www/chaneclaire/storage/logs
+# chmod -R 777 /var/www/chaneclaire/storage/framework
+#
+### .env ファイルを以下のように修正
+# DB_CONNECTION=mysql
+# DB_HOST=db
+# DB_PORT=3306
+# DB_DATABASE=chaneclaire
+# DB_USERNAME=admin
+# DB_PASSWORD=admin
+# SESSION_DRIVER=redis
+# REDIS_HOST=redis
+#
+### Laravel Breeze インストール
+# composer require laravel/breeze
+# php artisan breeze:install
+# npm install && npm run dev
+#
+### DB にテーブル作成
+# php artisan migrate
