@@ -8,7 +8,7 @@ phases:
    commands:
    - echo Logging in to Amazon ECR....
    # login to Elastic container registry
-   - eval $(aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/z0i8z3s8)
+   - eval $(aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 638081792720.dkr.ecr.us-east-1.amazonaws.com)
    - REPOSITORY_URI= public.ecr.aws/z0i8z3s8/sharebook:sharebook_php-fpm
    - IMAGE_TAG= sharebook_php-fpm
  build:
