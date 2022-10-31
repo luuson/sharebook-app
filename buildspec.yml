@@ -21,7 +21,7 @@ phases:
    - echo generating app key
    - php artisan key:generate
    - echo Building the Docker image...
-   - docker build -t sharebook_php-fpm:latest .
+   - docker build -t sharebook_php-fpm .
    -  docker tag sharebook_php-fpm public.ecr.aws/z0i8z3s8/sharebook:sharebook_php-fpm
  post_build:
    commands:
